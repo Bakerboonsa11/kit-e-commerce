@@ -1,14 +1,7 @@
-'use client';
-
-import 'bootstrap/dist/css/bootstrap.min.css'; // Bootstrap CSS
-import './globals.css'; // Your custom styles
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './globals.css';
 import Header from '../components/client/header';
-import { SessionProvider } from 'next-auth/react'; // ✅ This is required
-
-// Optional: Load Bootstrap JS on the client
-if (typeof window !== 'undefined') {
-  import('bootstrap/dist/js/bootstrap.bundle.min.js');
-}
+import Providers from '../app/provider';
 
 export default function RootLayout({
   children,
@@ -17,14 +10,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <head />
+      <head>
+        <title>My App</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </head>
       <body>
-        <SessionProvider>
-          <div>
-            <Header />
-            {children}
-          </div>
-        </SessionProvider>
+        <Providers>
+          <Header />
+          <main>{children}</main>
+        </Providers>
       </body>
     </html>
   );

@@ -1,21 +1,29 @@
 'use client';
 
 import { signIn, signOut, useSession } from 'next-auth/react';
-import { useState } from 'react';
-import { FaGoogle, FaGithub } from 'react-icons/fa'; // Importing the icons
+import { useState, FormEvent } from 'react';
+import { FaGoogle, FaGithub } from 'react-icons/fa';
 
-export default function SignIn() {
+const SignIn: React.FC = () => {
   const { data: session, status } = useSession();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null); // Added error state
 
-  const handleCredentialsSignIn = async (e) => {
+  const handleCredentialsSignIn = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await signIn('credentials', {
+    setError(null); // Reset any previous errors
+    const result = await signIn('credentials', {
       email,
       password,
-      callbackUrl: '/',
+      redirect: false, // Prevent auto redirect, we'll handle it manually
     });
+
+    if (result?.error) {
+      setError('Invalid email or password. Please try again.');
+    } else if (result?.url) {
+      window.location.href = result.url; // Redirect manually if no error
+    }
   };
 
   if (status === 'loading') {
@@ -29,18 +37,21 @@ export default function SignIn() {
       {session ? (
         <div className="text-center">
           <img
-            src={session.user.image || '/default-profile.png'}
+            src={session.user?.image || '/default-profile.png'}
             alt="Profile"
             className="rounded-circle mb-3"
             style={{ width: '80px', height: '80px', objectFit: 'cover' }}
           />
-          <h5 className="mb-2">{session.user.name || session.user.email}</h5>
+          <h5 className="mb-2">{session.user?.name || session.user?.email}</h5>
           <button onClick={() => signOut()} className="btn btn-outline-danger w-100">
             Sign Out
           </button>
         </div>
       ) : (
         <>
+          {/* Error Message */}
+          {error && <div className="alert alert-danger">{error}</div>}
+
           {/* Email/Password Form */}
           <form onSubmit={handleCredentialsSignIn} className="mb-3">
             <div className="mb-3">
@@ -96,4 +107,6 @@ export default function SignIn() {
       )}
     </div>
   );
-}
+};
+
+export default SignIn;

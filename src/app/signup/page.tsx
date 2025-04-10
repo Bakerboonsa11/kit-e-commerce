@@ -8,23 +8,20 @@ export default function SignUp() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Basic form validation
     if (!name || !email || !password) {
       setError('Please fill out all fields.');
       return;
     }
 
-    // Perform sign-up logic (you could call an API here)
-    // For now, just log the form data
     console.log('User data:', { name, email, password });
 
-    // Reset the form
     setName('');
     setEmail('');
     setPassword('');
+    setError('');
   };
 
   return (
@@ -34,7 +31,6 @@ export default function SignUp() {
       {error && <div className="alert alert-danger">{error}</div>}
 
       <form onSubmit={handleSubmit}>
-        {/* Name */}
         <div className="mb-3">
           <label htmlFor="name" className="form-label">Name</label>
           <input
@@ -47,7 +43,6 @@ export default function SignUp() {
           />
         </div>
 
-        {/* Email */}
         <div className="mb-3">
           <label htmlFor="email" className="form-label">Email</label>
           <input
@@ -60,7 +55,6 @@ export default function SignUp() {
           />
         </div>
 
-        {/* Password */}
         <div className="mb-3">
           <label htmlFor="password" className="form-label">Password</label>
           <input

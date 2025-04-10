@@ -2,11 +2,12 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 
 export default function Header() {
-  const isLoggedIn = true; // toggle to test
-  const userProfileImage = '/profile.jpg';
-
+  const { data: session, status } = useSession();
+  const loading = status === 'loading';
+  console.log(session)
   return (
     <header className="bg-dark text-white py-3">
       <div className="container d-flex justify-content-between align-items-center flex-wrap">
@@ -36,12 +37,12 @@ export default function Header() {
 
         {/* Auth Buttons */}
         <div className="d-flex align-items-center gap-2">
-          {isLoggedIn ? (
+          {!loading && session ? (
             <>
-              <Link href="/logout" className="btn btn-outline-light btn-sm">Sign Out</Link>
+              <Link href="/api/auth/signout" className="btn btn-outline-light btn-sm">Sign Out</Link>
               <Link href="/profile">
                 <img
-                  src='/globe.svg'
+                  src={session?.user?.image || '/next.svg'}
                   alt="Profile"
                   className="rounded-circle"
                   style={{ width: '36px', height: '36px', objectFit: 'cover' }}
@@ -51,7 +52,7 @@ export default function Header() {
           ) : (
             <>
               <Link href="/signup" className="btn btn-outline-light btn-sm">Sign Up</Link>
-              <Link href="/signin" className="btn btn-outline-light btn-sm">Sign In</Link>
+              <Link href="/api/auth/signin" className="btn btn-outline-light btn-sm">Sign In</Link>
             </>
           )}
         </div>
