@@ -1,9 +1,11 @@
-// app/layout.tsx
+'use client';
 
-import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
-import './globals.css'; // Your custom global styles (if any)
-import Header from '../components/client/header'
-// Dynamically import Bootstrap JS (only on client side)
+import 'bootstrap/dist/css/bootstrap.min.css'; // Bootstrap CSS
+import './globals.css'; // Your custom styles
+import Header from '../components/client/header';
+import { SessionProvider } from 'next-auth/react'; // ✅ This is required
+
+// Optional: Load Bootstrap JS on the client
 if (typeof window !== 'undefined') {
   import('bootstrap/dist/js/bootstrap.bundle.min.js');
 }
@@ -17,12 +19,13 @@ export default function RootLayout({
     <html lang="en">
       <head />
       <body>
-        <div>
-          <Header/>
-          {children}
+        <SessionProvider>
+          <div>
+            <Header />
+            {children}
           </div>
+        </SessionProvider>
       </body>
     </html>
   );
 }
-

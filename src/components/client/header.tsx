@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 
 export default function Header() {
-  const isLoggedIn = false; // toggle to test
+  const isLoggedIn = true; // toggle to test
   const userProfileImage = '/profile.jpg';
 
   return (
@@ -41,7 +41,7 @@ export default function Header() {
               <Link href="/logout" className="btn btn-outline-light btn-sm">Sign Out</Link>
               <Link href="/profile">
                 <img
-                  src={userProfileImage}
+                  src='/globe.svg'
                   alt="Profile"
                   className="rounded-circle"
                   style={{ width: '36px', height: '36px', objectFit: 'cover' }}
