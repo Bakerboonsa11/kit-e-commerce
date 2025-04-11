@@ -2,12 +2,14 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 export default function Header() {
   const { data: session, status } = useSession();
   const loading = status === 'loading';
-  console.log(session)
+  const router = useRouter();
+
   return (
     <header className="bg-dark text-white py-3">
       <div className="container d-flex justify-content-between align-items-center flex-wrap">
@@ -39,7 +41,12 @@ export default function Header() {
         <div className="d-flex align-items-center gap-2">
           {!loading && session ? (
             <>
-              <Link href="/api/auth/signout" className="btn btn-outline-light btn-sm">Sign Out</Link>
+              <button
+                onClick={() => signOut({ callbackUrl: '/' })}
+                className="btn btn-outline-light btn-sm"
+              >
+                Sign Out
+              </button>
               <Link href="/profile">
                 <img
                   src={session?.user?.image || '/next.svg'}
@@ -51,8 +58,18 @@ export default function Header() {
             </>
           ) : (
             <>
-              <Link href="/signup" className="btn btn-outline-light btn-sm">Sign Up</Link>
-              <Link href="/api/auth/signin" className="btn btn-outline-light btn-sm">Sign In</Link>
+              <button
+                onClick={() => router.push('/signup')}
+                className="btn btn-outline-light btn-sm"
+              >
+                Sign Up
+              </button>
+              <button
+                onClick={() => router.push('/api/auth/signin')}
+                className="btn btn-outline-light btn-sm"
+              >
+                Sign In
+              </button>
             </>
           )}
         </div>

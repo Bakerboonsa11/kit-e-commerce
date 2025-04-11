@@ -1,14 +1,17 @@
 'use client';
 
 import { useState } from 'react';
-
+import { handleSignup } from '@/lib/actions/signup'; // adjust path as needed
+import { useRouter } from 'next/navigation';
+import {signIn} from 'next-auth/react'
 export default function SignUp() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!name || !email || !password) {
@@ -16,12 +19,25 @@ export default function SignUp() {
       return;
     }
 
-    console.log('User data:', { name, email, password });
+    const res = await handleSignup({ name, email, password });
 
-    setName('');
-    setEmail('');
-    setPassword('');
-    setError('');
+    if (res.error) {
+      setError(res.error);
+      return;
+    }
+
+    
+    const loginRes = await signIn('credentials', {
+      redirect: true, // or false if you want to manually redirect
+      email,
+      password,
+      callbackUrl: '/', // or wherever you want to send them
+    });
+
+    if (loginRes?.error) {
+      setError(loginRes.error);
+    }
+    
   };
 
   return (
