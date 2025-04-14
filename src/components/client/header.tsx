@@ -4,12 +4,22 @@ import React from 'react';
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store/store'; // Adjust based on your setup
+import { BsCartFill } from 'react-icons/bs'; // Import Bootstrap cart icon from react-icons
+
 
 export default function Header() {
   const { data: session, status } = useSession();
   const loading = status === 'loading';
   const router = useRouter();
 
+
+  const cartItems = useSelector((state: RootState) => state?.cart.items);
+  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  console.log(cartItems)
+  
   return (
     <header className="bg-dark text-white py-3">
       <div className="container d-flex justify-content-between align-items-center flex-wrap">
@@ -75,9 +85,22 @@ export default function Header() {
         </div>
 
         {/* Cart Icon */}
-        <Link href="/cart" className="text-white ms-3">
-          <i className="bi bi-cart-fill fs-5"></i>
-        </Link>
+       {/* Cart Icon with Badge */}
+{/* Cart Icon with Badge */}
+<Link href="/cart" className="position-relative text-white ms-3 d-inline-block">
+  <BsCartFill size={24} />
+  {totalItems > 0 && (
+    <span
+      className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+      style={{ fontSize: '0.6rem' }}
+    >
+      {totalItems}
+    </span>
+  )}
+</Link>
+
+
+   
       </div>
     </header>
   );

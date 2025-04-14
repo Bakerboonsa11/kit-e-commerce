@@ -1,28 +1,39 @@
 "use client"
-import React, { useState } from 'react';
-
-// Sample product data
-const sampleProducts = [
-  { id: 1, name: 'Red Sports Shirt', price: 30, category: 'Clothing', image: '/shirt.jpg' },
-  { id: 2, name: 'Black Running Shoes', price: 80, category: 'Footwear', image: '/shoes.jpg' },
-  { id: 3, name: 'Blue Gym Bag', price: 45, category: 'Accessories', image: '/bag.jpg' },
-  { id: 4, name: 'Sweatband Set', price: 12, category: 'Accessories', image: '/sweatband.jpg' },
-  { id: 5, name: 'Track Pants', price: 50, category: 'Clothing', image: '/pants.jpg' },
-];
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import axios from 'axios';
 
 const ShoppingPage = () => {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('All');
+const [AllProducts, setAllProducts] = useState<any[]>([]);
 
-  const filteredProducts = sampleProducts.filter((product) => {
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const res = await axios.get('http://localhost:3000/api/product');
+        if (!res || !res.data || !res.data.instanceFiltered) {
+          alert("There was a problem fetching data");
+        } else {
+          setAllProducts(res.data.instanceFiltered);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchProduct();
+  }, []);
+
+  const filteredProducts = AllProducts.filter((product) => {
     const matchesSearch = product.name.toLowerCase().includes(search.toLowerCase());
     const matchesCategory = category === 'All' || product.category === category;
     return matchesSearch && matchesCategory;
   });
 
+
   return (
     <div className="container py-4">
-      {/* Page Title */}
       <h2 className="text-center fw-bold mb-4">Shop All Products</h2>
 
       {/* Filters */}
@@ -44,7 +55,7 @@ const ShoppingPage = () => {
           >
             <option value="All">All Categories</option>
             <option value="Clothing">Clothing</option>
-            <option value="Footwear">Footwear</option>
+            <option value="Fitness">Fitness</option>
             <option value="Accessories">Accessories</option>
           </select>
         </div>
@@ -54,7 +65,7 @@ const ShoppingPage = () => {
       <div className="row">
         {filteredProducts.length > 0 ? (
           filteredProducts.map((product) => (
-            <div className="col-6 col-sm-4 col-md-3 mb-4" key={product.id}>
+            <div className="col-6 col-sm-4 col-md-3 mb-4" key={product._id}>
               <div className="card h-100 shadow-sm">
                 <img
                   src='/fproduct2.png'
@@ -65,7 +76,7 @@ const ShoppingPage = () => {
                 <div className="card-body text-center">
                   <h6 className="card-title mb-2">{product.name}</h6>
                   <p className="text-primary fw-semibold">${product.price}</p>
-                  <button className="btn btn-sm btn-outline-primary">Add to Cart</button>
+                  <Link className="btn btn-sm btn-outline-primary" href={`/shop/kits/${product._id}`}>Show Details</Link>
                 </div>
               </div>
             </div>

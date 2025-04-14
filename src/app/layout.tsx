@@ -2,7 +2,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './globals.css';
 import Header from '../components/client/header';
 import Providers from '../app/provider';
-
 export default function RootLayout({
   children,
 }: {

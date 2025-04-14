@@ -84,29 +84,24 @@ export const updateOne = <T>(Model: Model<T>) =>
   };
 
 // GET ONE (by createdFor ID)
-export const getOne = <T>(Model: Model<T>) =>
+export const getOne = (Model: any) =>
   async (_req: NextRequest, params: { id: string }) => {
-    try {
-      const { id } = params;
-      const fetchedInstance = await Model.find({ createdFor: id });
+    const id = params?.id; // safer access
+    if (!id) {
+      return new Response(JSON.stringify({ message: 'No ID provided' }), { status: 400 });
+    }
 
-      if (!fetchedInstance || fetchedInstance.length === 0) {
-        return NextResponse.json({
-          status: "fail",
-          message: "No data found with this ID"
-        }, { status: 404 });
+    try {
+      const doc = await Model.findById(id);
+      if (!doc) {
+        return new Response(JSON.stringify({ message: 'No document found' }), { status: 404 });
       }
 
-      return NextResponse.json({
-        status: "success",
-        data: fetchedInstance,
+      return new Response(JSON.stringify({ status: 'success', data: doc }), {
+        status: 200,
       });
-
-    } catch (err) {
-      return NextResponse.json({
-        status: "fail",
-        message: (err as Error).message
-      }, { status: 500 });
+    } catch (err: any) {
+      return new Response(JSON.stringify({ message: err.message }), { status: 500 });
     }
   };
 
