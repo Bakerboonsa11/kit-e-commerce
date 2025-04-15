@@ -1,5 +1,5 @@
 'use client';
-
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { IKit } from '../../../../models/product';
@@ -16,6 +16,7 @@ interface Props {
 export default function KitDetailPage({ params }: Props) {
   const [id, setId] = useState<string | null>(null);
   const dispatch = useDispatch();
+  const router=useRouter()
   // Use React.use to unwrap params (new behavior)
   useEffect(() => {
     const getParams = async () => {
@@ -51,6 +52,7 @@ const handleAddToCart = (kit: IKit | null) => {
   dispatch(addToCart(kit))
   // setCart((prevCart) => [...prevCart, kit]);
   alert('Item added to cart!');
+  router.push('/shop');
   // console.log(cart)
 };
 
@@ -69,7 +71,7 @@ const handleRating=(star:any)=>{
         <div className="row g-0">
           <div className="col-md-5">
             <img
-              src='/melya.avif'
+              src={`/products/${kit.images[1]}`}
               className="img-fluid rounded-start w-100 h-100 object-fit-cover"
               alt={kit.name}
             />
@@ -111,10 +113,11 @@ const handleRating=(star:any)=>{
                     {kit.images.slice(1).map((img, idx) => (
                       <div key={idx} className="col-4">
                         <img
-                          src='/blu.png'
+                          src={`/products/${img}`}
                           className="img-fluid rounded border"
                           alt={`kit image ${idx + 1}`}
                         />
+                        
                       </div>
                     ))}
                   </div>

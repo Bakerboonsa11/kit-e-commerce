@@ -82,7 +82,7 @@ const [AllProducts, setAllProducts] = useState<any[]>([]);
             <div className="col-6 col-sm-4 col-md-3 mb-4" key={product._id}>
               <div className="card h-100 shadow-sm">
                 <img
-                  src='/fproduct2.png'
+                  src={`/products/${product.images[1]}` ||'/fproduct1.png'}
                   alt={product.name}
                   className="card-img-top"
                   style={{ height: '150px', objectFit: 'cover' }}

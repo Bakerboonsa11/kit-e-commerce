@@ -10,13 +10,13 @@ export async function POST(req: NextRequest) {
   const email = session?.user?.email;
   try {
     const body = await req.json();
-    const {  amount, first_name, last_name, phone_number } = body;
+    const {  amount, first_name, phone_number,productIds} = body;
 
     const tx_ref = `tx-${Date.now()}`;
 
     await dbConnect();
-    await Payment.create({ email, amount, tx_ref });
-
+    const doc=await Payment.create({ email, amount, tx_ref,productIds });
+     console.log("payment data saved is ",doc)
     const chapaRes = await axios.post(
       'https://api.chapa.co/v1/transaction/initialize',
       {
@@ -24,7 +24,6 @@ export async function POST(req: NextRequest) {
         amount,
         currency: 'ETB',
         first_name,
-        last_name,
         phone_number,
         tx_ref,
         return_url: `${process.env.NEXT_PUBLIC_BASE_URL}/verify?tx_ref=${tx_ref}`,
