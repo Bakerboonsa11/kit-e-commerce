@@ -118,7 +118,7 @@ export const getAll = <T>(Model: Model<T>) =>
         .filter()
         .sort()
         .fields()
-        .pagination();
+        // .pagination();
 
       const instanceFiltered = await features.databaseQuery;
 
@@ -127,6 +127,36 @@ export const getAll = <T>(Model: Model<T>) =>
         length: instanceFiltered.length,
         instanceFiltered
       });
+
+    } catch (err) {
+      return NextResponse.json({
+        status: "fail",
+        message: (err as Error).message
+      }, { status: 500 });
+    }
+  };
+
+// CREATE MANY
+export const createMany = <T>(Model: Model<T>) =>
+  async (req: NextRequest) => {
+    try {
+      const body = await req.json();
+
+      if (!Array.isArray(body) || body.length === 0) {
+        return NextResponse.json({
+          status: "fail",
+          message: "Request body must be a non-empty array of documents"
+        }, { status: 400 });
+      }
+
+      const createdInstances = await Model.insertMany(body, { ordered: true });
+
+      return NextResponse.json({
+        status: "success",
+        message: "Documents created successfully",
+        count: createdInstances.length,
+        data: createdInstances
+      }, { status: 201 });
 
     } catch (err) {
       return NextResponse.json({

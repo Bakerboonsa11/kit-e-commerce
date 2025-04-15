@@ -5,11 +5,19 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/store/store';
 import { removeFromCart } from '@/store/cartSlice';
 import styles from './cart.module.css';
+import { useState } from 'react';
+import Link from 'next/link';
 
 export default function Cart() {
+  const [loading,setLoading]=useState(false)
   const dispatch = useDispatch();
   const cartItems = useSelector((state: RootState) => state.cart.items);
-
+   const formatPhone = (localPhone: string) => {
+  if (localPhone.startsWith('0')) {
+    return '+251' + localPhone.slice(1);
+  }
+  return localPhone;
+};
   const handleRemove = (id: string) => {
     dispatch(removeFromCart(id));
   };
@@ -18,6 +26,22 @@ export default function Cart() {
     (sum, item) => sum + item.price * item.quantity,
     0
   );
+  const pay = async () => {
+    setLoading(true);
+    const phone = formatPhone('0912345678');
+    const res = await fetch('/api/checkout', {
+      method: 'POST',
+      body: JSON.stringify({
+        email: 'user@example.com',
+        amount: '100',
+        first_name: 'John',
+        last_name: 'Doe',
+        phone,
+      }),
+    });
+    const data = await res.json();
+    window.location.href = data.checkout_url;
+  };
 
   return (
     <div className={styles.container}>
@@ -25,7 +49,13 @@ export default function Cart() {
         <h2 className={styles.title}>Your Cart</h2>
 
         {cartItems.length === 0 ? (
-          <p className={styles.empty}>Your cart is empty 😞</p>
+          <div>
+              <p className={styles.empty}>Your cart is empty 😞</p>
+           <Link href="/shop" className="btn btn-primary">
+                ⬅️ Back to Shop
+              </Link>
+          </div>
+        
         ) : (
           <div className={styles.itemList}>
             {cartItems.map((item) => (
@@ -57,7 +87,7 @@ export default function Cart() {
         {cartItems.length > 0 && (
           <div className={styles.footer}>
             <p className={styles.total}>Total: ${totalAmount.toFixed(2)}</p>
-            <button className={styles.checkoutBtn}>Proceed to Checkout</button>
+            <button className={styles.checkoutBtn} onClick={pay} disabled={loading}>{loading ? 'Redirecting...' : 'Pay with Chapa'}</button>
           </div>
         )}
       </div>
