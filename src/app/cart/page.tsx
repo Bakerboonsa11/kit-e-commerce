@@ -1,26 +1,27 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/store/store';
 import { removeFromCart } from '@/store/cartSlice';
 import styles from './cart.module.css';
-import { useState } from 'react';
 import Link from 'next/link';
 import { signIn, signOut, useSession } from 'next-auth/react';
 
 export default function Cart() {
   const { data: session, status } = useSession();
-  
-  const [loading,setLoading]=useState(false)
+
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const cartItems = useSelector((state: RootState) => state.cart.items);
-   const formatPhone = (localPhone: string) => {
-  if (localPhone.startsWith('0')) {
-    return '+251' + localPhone.slice(1);
-  }
-  return localPhone;
-};
+
+  const formatPhone = (localPhone: string) => {
+    if (localPhone.startsWith('0')) {
+      return '+251' + localPhone.slice(1);
+    }
+    return localPhone;
+  };
+
   const handleRemove = (id: string) => {
     dispatch(removeFromCart(id));
   };
@@ -29,24 +30,21 @@ export default function Cart() {
     (sum, item) => sum + item.price * item.quantity,
     0
   );
-  const productIds=cartItems.map((iteam)=>{
-    return iteam._id
-  })
 
+  const productIds = cartItems.map((item) => item._id);
 
   const pay = async () => {
     setLoading(true);
     const phone = formatPhone('0912345678');
-    console.log("id of products are ",productIds)
+    console.log("id of products are ", productIds);
     const res = await fetch('/api/checkout', {
       method: 'POST',
       body: JSON.stringify({
-        email:session?.user?.email,
-        amount:totalAmount,
-        first_name:`${session?.user?.name}`,
+        email: session?.user?.email,
+        amount: totalAmount,
+        first_name: `${session?.user?.name}`,
         phone,
         productIds
-        
       }),
     });
     const data = await res.json();
@@ -60,19 +58,18 @@ export default function Cart() {
 
         {cartItems.length === 0 ? (
           <div>
-              <p className={styles.empty}>Your cart is empty 😞</p>
-           <Link href="/shop" className="btn btn-primary">
-                ⬅️ Back to Shop
-              </Link>
+            <p className={styles.empty}>Your cart is empty 😞</p>
+            <Link href="/shop" className="btn btn-primary">
+              ⬅️ Back to Shop
+            </Link>
           </div>
-        
         ) : (
           <div className={styles.itemList}>
             {cartItems.map((item) => (
               <div key={item._id} className={styles.cartItem}>
                 <div className={styles.itemInfo}>
                   <img
-                    src={`/products/${item.images[1]}`}
+                    src={`/products/${item.images?.[1] || item.images?.[0] || 'default.png'}`}
                     alt={item.name}
                     className={styles.image}
                   />
@@ -97,7 +94,13 @@ export default function Cart() {
         {cartItems.length > 0 && (
           <div className={styles.footer}>
             <p className={styles.total}>Total: ${totalAmount.toFixed(2)}</p>
-            <button className={styles.checkoutBtn} onClick={pay} disabled={loading}>{loading ? 'Redirecting...' : 'Pay with Chapa'}</button>
+            <button
+              className={styles.checkoutBtn}
+              onClick={pay}
+              disabled={loading}
+            >
+              {loading ? 'Redirecting...' : 'Pay with Chapa'}
+            </button>
           </div>
         )}
       </div>

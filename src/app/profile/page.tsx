@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React from "react";
 import { useSession } from "next-auth/react";
 import styles from "../../styles/profile.module.css";
@@ -11,7 +11,7 @@ const ProfilePage = () => {
 
   const user = session.user;
 
-  return (
+  return session?.user?.role === "user" ? (
     <div className={styles.profileWrapper}>
       <div className={styles.card}>
         <div className={styles.header}>
@@ -35,6 +35,8 @@ const ProfilePage = () => {
         </div>
       </div>
     </div>
+  ) : (
+    <div>Admin Dashboard</div>
   );
 };
 
