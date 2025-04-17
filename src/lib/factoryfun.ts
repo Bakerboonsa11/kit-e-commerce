@@ -1,7 +1,8 @@
 // lib/controllers/genericHandlers.ts (Next.js App Router Version)
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { NextRequest, NextResponse } from 'next/server';
 import AppFeatures from '../lib/appFeatures';
+// import mongoose from 'mongoose';
 // CREATE
 export const createOne = <T>(Model: Model<T>) =>
   async (req: NextRequest) => {
@@ -87,12 +88,19 @@ export const updateOne = <T>(Model: Model<T>) =>
 export const getOne = (Model: any) =>
   async (_req: NextRequest, params: { id: string }) => {
     const id = params?.id; // safer access
+    console.log("id is ",id)
     if (!id) {
       return new Response(JSON.stringify({ message: 'No ID provided' }), { status: 400 });
     }
 
     try {
-      const doc = await Model.findById(id);
+     let doc;
+
+      if (mongoose.Types.ObjectId.isValid(id)) {
+        doc = await Model.findById(id); // Search by _id
+      } else {
+        doc = await Model.findOne({ email: id }); // Search by email
+      }
       if (!doc) {
         return new Response(JSON.stringify({ message: 'No document found' }), { status: 404 });
       }

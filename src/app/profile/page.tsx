@@ -1,17 +1,38 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import AdminDashboard from '../../components/client/adminDashboard';
 import styles from "../../styles/profile.module.css";
+import axios from "axios";
 
 const ProfilePage = () => {
   const { data: session, status } = useSession();
+  const [role, setRole] = useState(null);
+
+  // Always call hooks before any early return
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3000/api/user/${session?.user?.email}`);
+        setRole(response.data?.data.role);
+        console.log(response.data.data)
+        console.log("role is",role)
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (session?.user?.email) {
+      fetchUser();
+    }
+  }, [session]);
 
   if (status === "loading") return <div className={styles.loading}>Loading...</div>;
   if (!session) return <div className={styles.error}>Access Denied. Please sign in.</div>;
 
   const user = session.user;
 
-  return session?.user?.role === "user" ? (
+  return role === "user" ? (
     <div className={styles.profileWrapper}>
       <div className={styles.card}>
         <div className={styles.header}>
@@ -36,7 +57,7 @@ const ProfilePage = () => {
       </div>
     </div>
   ) : (
-    <div>Admin Dashboard</div>
+    <AdminDashboard />
   );
 };
 

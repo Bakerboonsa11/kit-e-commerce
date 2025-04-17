@@ -1,0 +1,49 @@
+.dashboard {
+  display: flex;
+  height: 100vh;
+  background-color: #B5C0D0; /* main bg */
+  font-family: sans-serif;
+}
+
+.sidebar {
+  width: 220px;
+  background-color: #CCD3CA; /* sidebar */
+  padding: 1rem;
+  border-right: 2px solid #aaa;
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.button {
+  background-color: #F5E8DD; /* button */
+  border: none;
+  padding: 10px 15px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  width: 100%;
+  border-radius: 6px;
+  font-weight: bold;
+  color: #333;
+  transition: background 0.2s ease;
+}
+
+.button:hover {
+  background-color: #EED3D9; /* hover */
+}
+
+.active {
+  background-color: #EED3D9;
+}
+
+.mainContent {
+  flex: 1;
+  padding: 2rem;
+  background-color: #EED3D9; /* content bg */
+  color: #333;
+}

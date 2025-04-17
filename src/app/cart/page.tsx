@@ -6,7 +6,7 @@ import { RootState } from '@/store/store';
 import { removeFromCart } from '@/store/cartSlice';
 import styles from './cart.module.css';
 import Link from 'next/link';
-import { signIn, signOut, useSession } from 'next-auth/react';
+import {  useSession } from 'next-auth/react';
 
 export default function Cart() {
   const { data: session, status } = useSession();

@@ -1,0 +1,75 @@
+.form {
+  background-color: #F5E8DD;
+  padding: 1.2rem;
+  max-width: 340px;
+  margin: 2rem auto;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.formTitle {
+  text-align: center;
+  color: #B5C0D0;
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: #444;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.input,
+.textarea,
+.select {
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  margin-bottom: 0.8rem;
+  border: 1px solid #CCD3CA;
+  border-radius: 0.5rem;
+  background-color: #fff;
+  font-size: 0.9rem;
+  transition: border-color 0.3s;
+}
+
+.input:focus,
+.textarea:focus,
+.select:focus {
+  border-color: #B5C0D0;
+  outline: none;
+}
+
+.button {
+  background-color: #B5C0D0;
+  color: white;
+  padding: 0.6rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  width: 100%;
+  transition: background-color 0.3s;
+  margin-top: 0.5rem;
+}
+
+.button:hover {
+  background-color: #a2aabf;
+}
+
+.message {
+  text-align: center;
+  margin-top: 0.8rem;
+  font-weight: 500;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.note {
+  font-size: 0.8rem;
+  color: #888;
+  margin-bottom: 0.6rem;
+}
