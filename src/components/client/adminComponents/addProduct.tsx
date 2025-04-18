@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import styles from '../../../styles/createKit.module.css'
-
+import axios from 'axios';
 const CreateKit = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -37,6 +37,9 @@ const CreateKit = () => {
 
     if (res.ok) {
       setMessage('✅ Kit created successfully!');
+      setTimeout(() => {
+         setMessage('')
+      }, 4000);
       setFormData({
         name: '',
         description: '',

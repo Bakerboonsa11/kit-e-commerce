@@ -11,6 +11,7 @@ import styles from '../../styles/admin.module.css';
  import ApproveTranPage from './adminComponents/approveTransaction';
  import DeliveryCart   from './adminComponents/deliveryCart'
  import UserDataPage from './adminComponents/users'
+ import AllProducts from './adminComponents/products'
 // 
 export default function AdminDashboard() {
   const [activePanel, setActivePanel] = useState('overview');
@@ -20,26 +21,22 @@ export default function AdminDashboard() {
     switch (activePanel) {
       case 'createUser':
         return <CreateUserForm/>;
-      case 'updateUser':
-        // Handle case where no user is selected
-        return <UpdateUserForm/>; // Pass selected userId
+   
     
-      case 'approveProducts':
+      case 'approvetran':
         return <ApproveTranPage/>;
       case 'deliveryCart':
         return <DeliveryCart/>;
       case 'addProduct':
         return <CreateKit/> ;
-      case 'updateProduct':
-        return <UpdateProduct/>
-      case 'deleteProduct':
-        return <DeleteProduct/>;
+     
+      
       case 'users':
         return <UserDataPage/>;
       case 'transactions':
         return <div>transactions</div>;
       case 'products':
-        return <div>products</div>;
+        return <AllProducts/>;
       default:
         return <div><h2>Welcome Admin</h2><p>Select an action from the sidebar.</p></div>;
     }
@@ -52,14 +49,14 @@ export default function AdminDashboard() {
         {[
            { key: 'users', label: 'Users' },
           { key: 'createUser', label: 'Create User' },
-          { key: 'updateUser', label: 'Update User' },
+        
           
            { key: 'products', label: 'Products' },
           { key: 'addProduct', label: 'Add Product' },
-          { key: 'updateProduct', label: 'Update Product' },
+        
            
-          { key: 'deleteProduct', label: 'Delete Product' },
-            { key: 'approveProducts', label: 'Approve Products' },
+         
+            { key: 'approvetran', label: 'Approve Transaction' },
           { key: 'deliveryCart', label: 'Delivery Cart' },
           { key: 'transactions', label: 'Transactions' },
 

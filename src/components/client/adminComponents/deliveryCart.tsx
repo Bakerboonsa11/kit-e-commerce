@@ -1,52 +1,53 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import styles from '../../../styles/approveTran.module.css';
 
 interface Product {
   _id: string;
-  name: string;
-  price: number;
   status: string;
+  amount: string;
+  tx_ref: string;
+  productIds: string[];
 }
 
-// Static sample products (payment status = success)
-const sampleProducts: Product[] = [
-  { _id: '1', name: 'iPhone 14 Pro', price: 1099, status: 'success' },
-  { _id: '2', name: 'MacBook Air M2', price: 1299, status: 'success' },
-  { _id: '3', name: 'AirPods Max', price: 549, status: 'success' },
-];
-
-const DeliveryCart = () => {
-  const [products, setProducts] = useState<Product[]>(sampleProducts); // Use static products
+const ApproveTranPage = () => {
+  const [products, setProducts] = useState<Product[]>([]);
   const [message, setMessage] = useState('');
+  const [deliveredIds, setDeliveredIds] = useState<string[]>([]);
 
-  // Keeping fetch logic in case needed later
-  const fetchProducts = async () => {
+  const fetchedTrans = async () => {
     try {
-      const res = await fetch('/api/products?status=success');
+      const res = await fetch('/api/transction?status=paid');
       const data = await res.json();
-      // setProducts(data); // Temporarily not used
+      console.log('✅ transactions data are:', data);
+      if (data?.data) {
+        setProducts(data.data);
+      } else {
+        setMessage('No products found.');
+      }
     } catch (error) {
       setMessage('Failed to fetch products.');
+      console.error(error);
     }
   };
 
   useEffect(() => {
-    // fetchProducts(); // Disabled for now
+    fetchedTrans();
   }, []);
 
-  const handleApprove = async (id: string) => {
+  const handleDeliver = async (id: string) => {
     try {
-      const res = await fetch(`/api/products/${id}/approve`, {
-        method: 'PUT',
+      const res = await fetch(`/api/transction/${id}/approve`, {
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'paid' }),
+        body: JSON.stringify({ status: 'delivered' }),
       });
 
       if (res.ok) {
-        setProducts((prev) => prev.filter((product) => product._id !== id));
-        setMessage('Product approved successfully ✅');
+        setDeliveredIds((prev) => [...prev, id]);
+        setMessage('Product is assigned as Delivered ✅');
       } else {
         const result = await res.json();
         setMessage(`Error: ${result.message}`);
@@ -57,47 +58,62 @@ const DeliveryCart = () => {
   };
 
   return (
-    <div className={styles.container}>
-     <h1 className={styles.title}>Products Waiting for Approval</h1>
+    <div className="container mt-5">
+      <h1 className="text-center mb-4">Transactions Waiting for Approval</h1>
 
+      {message && <p className="alert alert-info">{message}</p>}
 
-      {message && <p className={styles.message}>{message}</p>}
-
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Price ($)</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.length > 0 ? (
-            products.map((product) => (
-              <tr key={product._id}>
-                <td>{product.name}</td>
-                <td>{product.price.toFixed(2)}</td>
-                <td>{product.status}</td>
-                <td>
-                  <button
-                    onClick={() => handleApprove(product._id)}
-                    className={styles.approveButton}
-                  >
-                    Approve
-                  </button>
-                </td>
-              </tr>
-            ))
-          ) : (
+      <div className="table-responsive">
+        <table className="table table-bordered table-striped">
+          <thead className="thead-dark">
             <tr>
-              <td colSpan={4}>No products pending approval.</td>
+              <th>ID</th>
+              <th>Amount ($)</th>
+              <th>Status</th>
+              <th>Transaction Reference (tx_ref)</th>
+              <th>Product IDs</th>
+              <th>Action</th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {products.length > 0 ? (
+              products.map((product) => (
+                <tr key={product._id}>
+                  <td>{product._id || 'Unknown'}</td>
+                  <td>{product.amount || 'Unknown'}</td>
+                  <td>{product.status}</td>
+                  <td>{product.tx_ref}</td>
+                  <td>
+                    {product.productIds.length > 0
+                      ? product.productIds.join(', ')
+                      : 'No products'}
+                  </td>
+                  <td>
+                    {deliveredIds.includes(product._id) ? (
+                      <button className="btn btn-secondary btn-sm" disabled>
+                        Delivered
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleDeliver(product._id)}
+                        className="btn btn-success btn-sm"
+                      >
+                        Deliver
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={6}>No transactions pending approval.</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
 
-export default DeliveryCart;
+export default ApproveTranPage;
