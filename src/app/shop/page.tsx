@@ -1,23 +1,26 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import axios from 'axios';
-
+import { useSession } from 'next-auth/react';
+import SignIn from '../signin/page'; // Your custom sign-in component
 
 const ShoppingPage = () => {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('All');
-const [AllProducts, setAllProducts] = useState<any[]>([]);
+  const [AllProducts, setAllProducts] = useState<any[]>([]);
+
+  const { data: session, status } = useSession();
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         const res = await axios.get('http://localhost:3000/api/product');
-        if (!res || !res.data || !res.data.instanceFiltered) {
+        if (!res?.data?.instanceFiltered) {
           alert("There was a problem fetching data");
         } else {
           setAllProducts(res.data.instanceFiltered);
-           console.log(res.data.instanceFiltered);
+          console.log(res.data.instanceFiltered);
         }
       } catch (error) {
         console.error(error);
@@ -29,11 +32,23 @@ const [AllProducts, setAllProducts] = useState<any[]>([]);
 
   const filteredProducts = AllProducts.filter((product) => {
     const matchesSearch = product.name.toLowerCase().includes(search.toLowerCase());
-    console.log(product.category === category)
     const matchesCategory = category === 'All' || product.category === category;
     return matchesSearch && matchesCategory;
   });
 
+  if (status === 'loading') {
+    return <p className="text-center py-5">Loading...</p>;
+  }
+
+  if (!session) {
+    return (
+      <div className="container py-5 text-center">
+        <h1 className="fw-bold mb-4">Please sign in first</h1>
+        <SignIn />
+        <Link href="/signup" className="btn btn-primary mt-3">Sign Up</Link>
+      </div>
+    );
+  }
 
   return (
     <div className="container py-4">
@@ -57,20 +72,19 @@ const [AllProducts, setAllProducts] = useState<any[]>([]);
             onChange={(e) => setCategory(e.target.value)}
           >
             <option value="All">All Categories</option>
-            <option value="football boots">football boots</option>
-            <option value="football jersey">football jersey</option>
-            <option value="gym materials">gym materials</option>
-            <option value="gym clothing">gym clothing</option>
-            <option value="athlete shoes">athlete shoes</option>
-            <option value="training kit">training kit</option>
-            <option value="football gear">football gear</option>
-
-            <option value="boxing gear">boxing gear</option>
-            <option value="basketball jersey">basketball jersey</option>
-            <option value="sports accessories">sports accessories</option>
-            <option value="table tennis gear">table tennis gear</option>
-             <option value="badminton gear">badminton gear</option>
-            <option value="cricket gear">cricket gear</option>
+            <option value="football boots">Football Boots</option>
+            <option value="football jersey">Football Jersey</option>
+            <option value="gym materials">Gym Materials</option>
+            <option value="gym clothing">Gym Clothing</option>
+            <option value="athlete shoes">Athlete Shoes</option>
+            <option value="training kit">Training Kit</option>
+            <option value="football gear">Football Gear</option>
+            <option value="boxing gear">Boxing Gear</option>
+            <option value="basketball jersey">Basketball Jersey</option>
+            <option value="sports accessories">Sports Accessories</option>
+            <option value="table tennis gear">Table Tennis Gear</option>
+            <option value="badminton gear">Badminton Gear</option>
+            <option value="cricket gear">Cricket Gear</option>
           </select>
         </div>
       </div>
@@ -82,7 +96,7 @@ const [AllProducts, setAllProducts] = useState<any[]>([]);
             <div className="col-6 col-sm-4 col-md-3 mb-4" key={product._id}>
               <div className="card h-100 shadow-sm">
                 <img
-                  src={`/products/${product.images[1]}` ||'/fproduct1.png'}
+                  src={`/products/${product.images?.[1] || 'fproduct1.png'}`}
                   alt={product.name}
                   className="card-img-top"
                   style={{ height: '150px', objectFit: 'cover' }}
@@ -104,29 +118,3 @@ const [AllProducts, setAllProducts] = useState<any[]>([]);
 };
 
 export default ShoppingPage;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
