@@ -17,7 +17,17 @@ import payment from "@/models/payment";
 import { updateOne } from "@/lib/factoryfun";
 
 // PATCH /api/payment/[id]
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+// export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+//   await dbConnect();
+//   return updateOne(payment)(req, params);
+// }
+
+
+export async function PATCH(
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
   await dbConnect();
+  const params = await context.params;
   return updateOne(payment)(req, params);
 }
