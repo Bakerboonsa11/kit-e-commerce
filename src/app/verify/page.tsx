@@ -1,6 +1,6 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
@@ -19,14 +19,14 @@ type PaymentInfo = {
 };
 
 export default function VerifyPage() {
-  const searchParams = useSearchParams();
-  const tx_ref = searchParams.get('tx_ref');
+  const router = useRouter();
+  const { tx_ref } = router.query; // This will give you the query params from the URL
   const [status, setStatus] = useState('Verifying...');
   const [paymentData, setPaymentData] = useState<PaymentInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!tx_ref) return;
+    if (!tx_ref) return; // If tx_ref is not available yet
 
     const verify = async () => {
       try {
