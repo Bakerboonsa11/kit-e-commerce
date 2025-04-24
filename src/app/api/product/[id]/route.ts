@@ -1,23 +1,22 @@
 import { NextRequest } from 'next/server';
 import dbConnect from '@/lib/db';
-import Kit from '../../../../models/product';
-import { updateOne, deleteOne, getOne } from '../../../../lib/factoryfun';
+import Kit from '@/models/product';
+import { updateOne, deleteOne, getOne } from '@/lib/factoryfun';
 
 // GET: Get a single Kit by ID
-export const GET = async (req: NextRequest, context: { params: { id: string } }) => {
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   await dbConnect();
-  return getOne(Kit)(req, context.params); // ✅ use context.params, not destructuring
-};
+  return getOne(Kit)(req, params);
+}
 
-// PATCH: Update a Kit
-export const PATCH = async (req: NextRequest, context: { params: { id: string } }) => {
+// PATCH: Update a Kit by ID
+export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
   await dbConnect();
-  return updateOne(Kit)(req, context.params);
-};
+  return updateOne(Kit)(req, params);
+}
 
-// DELETE: Delete a Kit
-export const DELETE = async (req: NextRequest, context: { params: { id: string } }) => {
+// DELETE: Delete a Kit by ID
+export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
   await dbConnect();
-  console.log("hitted delete parat")
-  return deleteOne(Kit)(req, context.params);
-};
+  return deleteOne(Kit)(req, params);
+}
