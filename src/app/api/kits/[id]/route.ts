@@ -1,22 +1,22 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/db';
 import Kit from '@/models/product';
 import { updateOne, deleteOne, getOne } from '@/lib/factoryfun';
 
-// GET: Get a single Kit by ID
-export const GET = async (req: NextRequest, { params }: { params: { id: string } }) => {
+export async function GET(req: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
   await dbConnect();
-  return getOne(Kit)(req, params); // Using the ID from dynamic route
-};
+  return getOne(Kit)(req, { id });
+}
 
-// PATCH: Update a Kit by ID
-export const PATCH = async (req: NextRequest, { params }: { params: { id: string } }) => {
+export async function PATCH(req: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
   await dbConnect();
-  return updateOne(Kit)(req, params); // Update using factory function
-};
+  return updateOne(Kit)(req, { id });
+}
 
-// DELETE: Delete a Kit by ID
-export const DELETE = async (req: NextRequest, { params }: { params: { id: string } }) => {
+export async function DELETE(req: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
   await dbConnect();
-  return deleteOne(Kit)(req, params); // Delete using factory function
-};
+  return deleteOne(Kit)(req, { id });
+}
