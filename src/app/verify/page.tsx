@@ -1,7 +1,9 @@
 'use client';
+
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+
 type PaymentInfo = {
   reference: string;
   tx_ref: string;
@@ -16,22 +18,35 @@ type PaymentInfo = {
   created_at: string;
 };
 
-
 export default function VerifyPage() {
   const searchParams = useSearchParams();
   const tx_ref = searchParams.get('tx_ref');
   const [status, setStatus] = useState('Verifying...');
-const [paymentData, setPaymentData] = useState<PaymentInfo | null>(null);
+  const [paymentData, setPaymentData] = useState<PaymentInfo | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!tx_ref) return;
 
     const verify = async () => {
-      const res = await fetch(`/api/verify?tx_ref=${tx_ref}`);
-      const data = await res.json();
-      console.log("payment data is", data);
-      setStatus(data.status);
-      setPaymentData(data.paymentData);
+      try {
+        const res = await fetch(`/api/verify?tx_ref=${tx_ref}`);
+        if (!res.ok) throw new Error('Failed to verify payment');
+
+        const data = await res.json();
+
+        if (data.status === 'Successful') {
+          setStatus('Successful');
+          setPaymentData(data.paymentData);
+        } else {
+          setStatus('Failed ❌');
+          setError('Payment verification failed. Please try again or contact support.');
+        }
+      } catch (err: any) {
+        console.error('Verification error:', err);
+        setStatus('Failed ❌');
+        setError('Something went wrong during verification. Please try again later.');
+      }
     };
 
     verify();
@@ -40,7 +55,17 @@ const [paymentData, setPaymentData] = useState<PaymentInfo | null>(null);
   return (
     <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
       <div className="card shadow p-4" style={{ maxWidth: '500px', width: '100%' }}>
-        <h4 className="text-center text-success mb-3">✅ Payment {status}</h4>
+        <h4
+          className={`text-center mb-3 ${
+            status === 'Successful' ? 'text-success' : status.includes('Failed') ? 'text-danger' : 'text-primary'
+          }`}
+        >
+          {status === 'Verifying...' ? '🔄 Verifying Payment...' : `✅ Payment ${status}`}
+        </h4>
+
+        {error && (
+          <p className="text-danger text-center mb-3">{error}</p>
+        )}
 
         {paymentData ? (
           <>
@@ -62,7 +87,7 @@ const [paymentData, setPaymentData] = useState<PaymentInfo | null>(null);
               </Link>
             </div>
           </>
-        ) : (
+        ) : !error && (
           <p className="text-center">🔄 Verifying payment, please wait...</p>
         )}
       </div>
