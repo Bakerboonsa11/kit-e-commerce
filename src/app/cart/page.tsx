@@ -54,8 +54,8 @@ export default function Cart() {
       }),
     });
     const data = await res.json();
-    // window.location.href = data.checkout_url;
-    // router.push(data.checkout_url);
+   
+    router.push(data.checkout_url);
   };
 
   return (

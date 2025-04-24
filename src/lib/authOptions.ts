@@ -17,7 +17,10 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const { email, password } = credentials as { email: string; password: string };
+        const { email, password } = credentials as {
+          email: string;
+          password: string;
+        };
         await dbConnect();
         const user = await UserModel.findOne({ email });
 
@@ -44,17 +47,31 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GITHUB_SECRET_ID!,
     }),
   ],
-  pages: { signIn: "/signin" },
-  session: { strategy: "jwt" },
+  pages: {
+    signIn: "/signin",
+  },
+  session: {
+    strategy: "jwt",
+  },
   callbacks: {
-    async jwt({ token, user, account }) {
-      await dbConnect();
+    async jwt({ token, user }) {
+      // If user is present (on initial sign-in), merge user into token
+      if (user) {
+        token.id = user.id;
+        token.name = user.name;
+        token.email = user.email;
+        token.image = user.image;
+        
+      }
       return token;
     },
     async session({ session, token }) {
       if (session?.user) {
-        session.user.email = token.email as string;
         session.user.id = token.id as string;
+        session.user.name = token.name as string;
+        session.user.email = token.email as string;
+        session.user.image = token.image as string;
+        session.user.role = token.role as string;
       }
       return session;
     },
