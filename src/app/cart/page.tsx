@@ -8,7 +8,13 @@ import styles from './cart.module.css';
 import Link from 'next/link';
 import {  useSession } from 'next-auth/react';
 
+import { useRouter } from 'next/navigation';
+
+
+
+
 export default function Cart() {
+  const router = useRouter();
   const { data: session, status } = useSession();
 
   const [loading, setLoading] = useState(false);
@@ -48,7 +54,8 @@ export default function Cart() {
       }),
     });
     const data = await res.json();
-    window.location.href = data.checkout_url;
+    // window.location.href = data.checkout_url;
+    router.push(data.checkout_url);
   };
 
   return (
