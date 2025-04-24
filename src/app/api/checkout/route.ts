@@ -3,7 +3,7 @@ import axios from 'axios';
 import dbConnect from '@/lib/db';
 import Payment from '@/models/payment';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../auth/[...nextauth]/route';
+import { authOptions } from "@/lib/authOptions";
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
