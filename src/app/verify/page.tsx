@@ -19,11 +19,18 @@ type PaymentInfo = {
 };
 
 export default function VerifyPage() {
-  const router = useRouter();
-  const { tx_ref } = router.query; // This will give you the query params from the URL
   const [status, setStatus] = useState('Verifying...');
   const [paymentData, setPaymentData] = useState<PaymentInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isClient, setIsClient] = useState(false); // Track if we are on the client-side
+
+  useEffect(() => {
+    setIsClient(typeof window !== 'undefined'); // Check if window is available
+
+    if (!isClient) return; // Skip rendering if not on the client-side
+  }, [isClient]);
+
+  const { tx_ref } = useRouter().query; // Use useRouter after confirming client-side rendering
 
   useEffect(() => {
     if (!tx_ref) return; // If tx_ref is not available yet
@@ -51,6 +58,10 @@ export default function VerifyPage() {
 
     verify();
   }, [tx_ref]);
+
+  if (!isClient) {
+    return null; // Avoid rendering on server side
+  }
 
   return (
     <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
