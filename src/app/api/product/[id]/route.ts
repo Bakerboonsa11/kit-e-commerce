@@ -4,19 +4,28 @@ import Kit from '@/models/product';
 import { updateOne, deleteOne, getOne } from '@/lib/factoryfun';
 
 // GET: Get a single Kit by ID
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(
+  req: NextRequest,
+  context: { params: { id: string } }
+) {
   await dbConnect();
-  return getOne(Kit)(req, params);
+  return getOne(Kit)(req, context.params);
 }
 
 // PATCH: Update a Kit by ID
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(
+  req: NextRequest,
+  context: { params: { id: string } }
+) {
   await dbConnect();
-  return updateOne(Kit)(req, params);
+  return updateOne(Kit)(req, context.params);
 }
 
 // DELETE: Delete a Kit by ID
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(
+  req: NextRequest,
+  context: { params: { id: string } }
+) {
   await dbConnect();
-  return deleteOne(Kit)(req, params);
+  return deleteOne(Kit)(req, context.params);
 }
