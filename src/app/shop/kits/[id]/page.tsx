@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { IKit } from '../../../../models/product';
-import { useDispatch, UseDispatch } from 'react-redux';
+import { useDispatch} from 'react-redux';
 import { addToCart } from '@/store/cartSlice';
 interface Props {
   params: {
