@@ -19,7 +19,7 @@ const UserDataPage = () => {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:3000/api/user');
+      const response = await axios.get('/api/user');
       console.log(response.data); // Log the response to see its structure
 
       // Check if the response contains the data we expect
@@ -39,7 +39,7 @@ const UserDataPage = () => {
   const handleDelete = async (userId: string) => {
     try {
       console.log(userId)
-      await axios.delete(`http://localhost:3000/api/user/${userId}`);
+      await axios.delete(`/api/user/${userId}`);
       setUserList(userList.filter((user) => user._id !== userId)); // Remove deleted user from state
     } catch (error) {
       console.error("Error deleting user:", error);

@@ -24,7 +24,7 @@ const AllProducts = () => {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:3000/api/product');
+      const response = await axios.get('/api/product');
       console.log("products from all", response.data.data);
 
       if (Array.isArray(response.data.instanceFiltered)) {
@@ -42,7 +42,7 @@ const AllProducts = () => {
   const handleDelete = async (productId: string) => {
     try {
       console.log("id to delete",productId)
-      await axios.delete(`http://localhost:3000/api/product/${productId}`);
+      await axios.delete(`/api/product/${productId}`);
       setProducts(products.filter((p) => p._id !== productId));
     } catch (error) {
       console.error("Error deleting product:", error);
