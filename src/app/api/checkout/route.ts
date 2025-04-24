@@ -26,8 +26,9 @@ export async function POST(req: NextRequest) {
         first_name,
         phone_number,
         tx_ref,
-        return_url: `${process.env.NEXT_PUBLIC_BASE_URL}/verify?tx_ref=${tx_ref}`,
+        return_url: `${process.env.NEXTAUTH_URL}/verify?tx_ref=${tx_ref}`,
       },
+      
       {
         headers: {
           Authorization: `Bearer ${process.env.CHAPA_SECRET_KEY}`,

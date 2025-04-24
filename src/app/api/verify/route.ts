@@ -16,6 +16,7 @@ export async function GET(req:NextRequest) {
         },
       }
     );
+    
     const paymentData = verifyRes.data.data;
     const status = verifyRes.data.data.status;
     await dbConnect();

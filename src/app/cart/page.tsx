@@ -13,7 +13,7 @@ export default function Cart() {
 
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
-  const cartItems = useSelector((state: RootState) => state.cart.items);
+  const cartItems = useSelector((state: RootState) => state?.cart.items);
 
   const formatPhone = (localPhone: string) => {
     if (localPhone.startsWith('0')) {
