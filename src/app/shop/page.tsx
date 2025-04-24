@@ -15,7 +15,7 @@ const ShoppingPage = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await axios.get('http://localhost:3000/api/product');
+        const res = await axios.get('/api/product');
         if (!res?.data?.instanceFiltered) {
           alert("There was a problem fetching data");
         } else {
