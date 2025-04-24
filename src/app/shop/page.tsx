@@ -40,15 +40,15 @@ const ShoppingPage = () => {
     return <p className="text-center py-5">Loading...</p>;
   }
 
-  if (!session) {
-    return (
-      <div className="container py-5 text-center">
-        <h1 className="fw-bold mb-4">Please sign in first</h1>
-        <SignIn />
-        <Link href="/signup" className="btn btn-primary mt-3">Sign Up</Link>
-      </div>
-    );
-  }
+  // if (!session) {
+  //   return (
+  //     <div className="container py-5 text-center">
+  //       <h1 className="fw-bold mb-4">Please sign in first</h1>
+  //       <SignIn />
+  //       <Link href="/signup" className="btn btn-primary mt-3">Sign Up</Link>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="container py-4">
