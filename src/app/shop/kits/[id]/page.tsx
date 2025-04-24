@@ -1,35 +1,35 @@
 'use client';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { IKit } from '../../../../models/product';
-import { useDispatch} from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { addToCart } from '@/store/cartSlice';
-interface Props {
-  params: {
-    id: string;
-  };
+import { useParams } from 'next/navigation';
+import Image from 'next/image';
+
+// Define the Params type for useParams with index signature
+interface Params {
+  [key: string]: string | string[]; // Allow any dynamic key with string or string[] values
 }
 
-
-
-export default function KitDetailPage({ params }: Props) {
+export default function KitDetailPage() {
   const [id, setId] = useState<string | null>(null);
   const dispatch = useDispatch();
-  const router=useRouter()
-  // Use React.use to unwrap params (new behavior)
+
+  // Accessing params using useParams hook
+  const params = useParams<Params>();
+
   useEffect(() => {
-    const getParams = async () => {
-      const resolvedParams = await params;
-      setId(resolvedParams.id);
-    };
-    getParams();
+    if (params?.id) {
+      setId(Array.isArray(params.id) ? params.id[0] : params.id); // Handle string[] case
+    }
   }, [params]);
 
   const [kit, setKit] = useState<IKit | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-// const [cart, setCart] = useState<IKit[]>([]);
+
+  // Fetch kit data using the ID from params
   useEffect(() => {
     if (id) {
       const fetchKit = async () => {
@@ -47,19 +47,16 @@ export default function KitDetailPage({ params }: Props) {
     }
   }, [id]);
 
-const handleAddToCart = (kit: IKit | null) => {
-  if (!kit) return; 
-  dispatch(addToCart(kit))
-  // setCart((prevCart) => [...prevCart, kit]);
-  alert('Item added to cart!');
-  router.push('/shop');
-  // console.log(cart)
-};
+  const handleAddToCart = (kit: IKit | null) => {
+    if (!kit) return;
+    dispatch(addToCart(kit));
+    alert('Item added to cart!');
+  };
 
-const handleRating=(star:any)=>{
-    alert('handlr rating')
-    console.log(star)
-}
+  const handleRating = (star: number) => {
+    alert(`You rated this kit ${star} stars!`);
+    console.log(star);
+  };
 
   if (loading) return <div className="text-center py-5">Loading...</div>;
   if (error) return <div className="alert alert-danger text-center my-4">{error}</div>;
@@ -70,10 +67,12 @@ const handleRating=(star:any)=>{
       <div className="card shadow-lg">
         <div className="row g-0">
           <div className="col-md-5">
-            <img
+            <Image
               src={`/products/${kit.images[1]}`}
-              className="img-fluid rounded-start w-100 h-100 object-fit-cover"
               alt={kit.name}
+              width={500}
+              height={500}
+              className="img-fluid rounded-start w-100 h-100 object-fit-cover"
             />
           </div>
           <div className="col-md-7">
@@ -112,12 +111,13 @@ const handleRating=(star:any)=>{
                   <div className="row g-2">
                     {kit.images.slice(1).map((img, idx) => (
                       <div key={idx} className="col-4">
-                        <img
+                        <Image
                           src={`/products/${img}`}
-                          className="img-fluid rounded border"
                           alt={`kit image ${idx + 1}`}
+                          width={500}
+                          height={500}
+                          className="img-fluid rounded border"
                         />
-                        
                       </div>
                     ))}
                   </div>
@@ -126,7 +126,7 @@ const handleRating=(star:any)=>{
 
               {/* Add to Cart button */}
               <div className="mt-4">
-                <button className="btn btn-primary" onClick={()=>{handleAddToCart(kit)}}>
+                <button className="btn btn-primary" onClick={() => handleAddToCart(kit)}>
                   Add to Cart
                 </button>
               </div>
@@ -151,7 +151,6 @@ const handleRating=(star:any)=>{
                   ))}
                 </div>
               </div>
-
             </div>
           </div>
         </div>
