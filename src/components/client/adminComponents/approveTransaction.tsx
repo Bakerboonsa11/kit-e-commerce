@@ -18,7 +18,7 @@ const ApproveTranPage = () => {
 
   const fetchedTrans = async () => {
     try {
-      const res = await fetch('/api/transction?status=success');
+      const res = await fetch('/api/transction?status=pending');
       const data = await res.json();
       console.log('✅ transactions data are:', data); // Log the full response to check the structure
       if (data?.data) {
