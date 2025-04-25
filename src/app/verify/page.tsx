@@ -35,15 +35,15 @@ export default function VerifyPage() {
         if (!res.ok) throw new Error('Failed to verify payment');
 
         const data = await res.json();
-        alert(data)
-        if (data.status === 'Successful') {
+        // alert(data)
+        if (data.paymentData) {
           setStatus('Successful');
           setPaymentData(data.paymentData);
         } else {
-          // setStatus('Failed ❌');
-          setStatus('Successful');
+          setStatus('Failed ❌');
+          // setStatus('Successful');
           setError('Payment verification failed. Please try again or contact support.');
-          setPaymentData(data.paymentData);
+          // setPaymentData(data.paymentData);
         }
       } catch (err: any) {
         console.error('Verification error:', err);
