@@ -1,27 +1,28 @@
 'use client';
+
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { IKit } from '../../../../models/product';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '@/store/cartSlice';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 
-// Define the Params type for useParams
+// Correct Params interface for useParams (App Router)
 interface Params {
-  id: string | string[];
+  [key: string]: string | string[];
 }
 
 export default function KitDetailPage() {
   const [id, setId] = useState<string | null>(null);
   const dispatch = useDispatch();
+  const router = useRouter();
 
-  // Accessing params using useParams hook
   const params = useParams<Params>();
 
   useEffect(() => {
     if (params?.id) {
-      setId(Array.isArray(params.id) ? params.id[0] : params.id); // Handle string[] case
+      setId(Array.isArray(params.id) ? params.id[0] : params.id);
     }
   }, [params]);
 
@@ -29,7 +30,6 @@ export default function KitDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch kit data using the ID from params
   useEffect(() => {
     if (id) {
       const fetchKit = async () => {
@@ -50,7 +50,7 @@ export default function KitDetailPage() {
   const handleAddToCart = (kit: IKit | null) => {
     if (!kit) return;
     dispatch(addToCart(kit));
-    alert('Item added to cart!');
+    router.push('/shop'); // Redirect to cart page
   };
 
   const handleRating = (star: number) => {
@@ -80,19 +80,11 @@ export default function KitDetailPage() {
               <h2 className="card-title fw-bold">{kit.name}</h2>
               <p className="card-text text-muted">{kit.description}</p>
               <ul className="list-group list-group-flush my-3">
-                <li className="list-group-item">
-                  <strong>Category:</strong> {kit.category}
-                </li>
-                <li className="list-group-item">
-                  <strong>Brand:</strong> {kit.brand}
-                </li>
-                <li className="list-group-item">
-                  <strong>Price:</strong> ${kit.price.toFixed(2)}
-                </li>
+                <li className="list-group-item"><strong>Category:</strong> {kit.category}</li>
+                <li className="list-group-item"><strong>Brand:</strong> {kit.brand}</li>
+                <li className="list-group-item"><strong>Price:</strong> ${kit.price.toFixed(2)}</li>
                 {kit.discount !== undefined && (
-                  <li className="list-group-item">
-                    <strong>Discount:</strong> {kit.discount}%
-                  </li>
+                  <li className="list-group-item"><strong>Discount:</strong> {kit.discount}%</li>
                 )}
                 <li className="list-group-item">
                   <strong>Ratings:</strong> {kit.ratingsAverage} ⭐ ({kit.ratingsQuantity} reviews)
@@ -124,14 +116,12 @@ export default function KitDetailPage() {
                 </div>
               )}
 
-              {/* Add to Cart button */}
               <div className="mt-4">
                 <button className="btn btn-primary" onClick={() => handleAddToCart(kit)}>
                   Add to Cart
                 </button>
               </div>
 
-              {/* Rating System */}
               <div className="mt-4">
                 <h5>Rate this kit:</h5>
                 <div className="d-flex">
