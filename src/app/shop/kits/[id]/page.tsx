@@ -61,7 +61,7 @@ export default function KitDetailPage() {
   if (loading) return <div className="text-center py-5">Loading...</div>;
   if (error) return <div className="alert alert-danger text-center my-4">{error}</div>;
   if (!kit) return <div className="text-center py-5">Kit not found</div>;
-
+// 
   return (
     <div className="container py-5">
       <div className="card shadow-lg">
