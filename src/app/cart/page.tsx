@@ -6,12 +6,8 @@ import { RootState } from '@/store/store';
 import { removeFromCart } from '@/store/cartSlice';
 import styles from './cart.module.css';
 import Link from 'next/link';
-import {  useSession } from 'next-auth/react';
-
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-
-
-
 
 export default function Cart() {
   const router = useRouter();
@@ -40,22 +36,41 @@ export default function Cart() {
   const productIds = cartItems.map((item) => item._id);
 
   const pay = async () => {
+    if (status !== 'authenticated') {
+      console.warn('User not authenticated');
+      return;
+    }
+
     setLoading(true);
+
     const phone = formatPhone('0912345678');
-    console.log("id of products are ", productIds);
-    const res = await fetch('/api/checkout', {
-      method: 'POST',
-      body: JSON.stringify({
-        email: session?.user?.email,
-        amount: totalAmount,
-        first_name: `${session?.user?.name}`,
-        phone,
-        productIds
-      }),
-    });
-    const data = await res.json();
-   
-    router.push(data.checkout_url);
+
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: session?.user?.email,
+          amount: totalAmount,
+          first_name: session?.user?.name,
+          phone,
+          productIds,
+        }),
+      });
+
+      const data = await res.json();
+      console.log('Redirecting to:', data.checkout_url);
+
+      if (data?.checkout_url) {
+        router.push(data.checkout_url);
+      } else {
+        console.error('Missing checkout_url in response:', data);
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
