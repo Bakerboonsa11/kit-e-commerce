@@ -28,14 +28,14 @@ export default function VerifyPage() {
 
   useEffect(() => {
     if (!tx_ref) return;
-
+   
     const verify = async () => {
       try {
         const res = await fetch(`/api/verify?tx_ref=${tx_ref}`);
         if (!res.ok) throw new Error('Failed to verify payment');
 
         const data = await res.json();
-
+        alert(data)
         if (data.status === 'Successful') {
           setStatus('Successful');
           setPaymentData(data.paymentData);
