@@ -6,17 +6,16 @@ import { useDispatch } from 'react-redux';
 import { addToCart } from '@/store/cartSlice';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
 
-// Define the Params type for useParams with index signature
+// Define the Params type for useParams
 interface Params {
-  [key: string]: string | string[]; // Allow any dynamic key with string or string[] values
+  id: string | string[];
 }
 
 export default function KitDetailPage() {
   const [id, setId] = useState<string | null>(null);
   const dispatch = useDispatch();
- const router =useRouter()
+
   // Accessing params using useParams hook
   const params = useParams<Params>();
 
@@ -51,7 +50,7 @@ export default function KitDetailPage() {
   const handleAddToCart = (kit: IKit | null) => {
     if (!kit) return;
     dispatch(addToCart(kit));
-    router.push('/shop')
+    alert('Item added to cart!');
   };
 
   const handleRating = (star: number) => {
