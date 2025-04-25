@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/router';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
@@ -19,21 +19,15 @@ type PaymentInfo = {
 };
 
 export default function VerifyPage() {
+  const searchParams = useSearchParams();
+  const tx_ref = searchParams.get('tx_ref');
+
   const [status, setStatus] = useState('Verifying...');
   const [paymentData, setPaymentData] = useState<PaymentInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [isClient, setIsClient] = useState(false); // Track if we are on the client-side
 
   useEffect(() => {
-    setIsClient(typeof window !== 'undefined'); // Check if window is available
-
-    if (!isClient) return; // Skip rendering if not on the client-side
-  }, [isClient]);
-
-  const { tx_ref } = useRouter().query; // Use useRouter after confirming client-side rendering
-
-  useEffect(() => {
-    if (!tx_ref) return; // If tx_ref is not available yet
+    if (!tx_ref) return;
 
     const verify = async () => {
       try {
@@ -58,10 +52,6 @@ export default function VerifyPage() {
 
     verify();
   }, [tx_ref]);
-
-  if (!isClient) {
-    return null; // Avoid rendering on server side
-  }
 
   return (
     <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
@@ -105,22 +95,3 @@ export default function VerifyPage() {
     </div>
   );
 }
-
-
-
-// export default function VerifyPage() {
- 
-//   return (
-//     <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
-    
-        
-
-//             <div className="text-center">
-//               <Link href="/shop" className="btn btn-primary">
-//                 ⬅️ Back to Shop
-//               </Link>
-//             </div>
-         
-//     </div>
-//   );
-// }
