@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
+
 export default function Cart() {
   const router = useRouter();
   const { data: session, status } = useSession();
@@ -73,6 +74,8 @@ export default function Cart() {
     }
   };
   // 
+
+
 
   return (
     <div className={styles.container}>
